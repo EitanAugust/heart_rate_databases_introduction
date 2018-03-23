@@ -1,2 +1,5 @@
 pymodm
 flask
+pytest
+requests
+pytest-pep8
