@@ -83,7 +83,7 @@ def add_hr():
     else:
         u = models.User(email=r["user_email"], age=r["user_age"],
                         heart_rate=[r["heart_rate"]],
-                        heart_rate_times=[str(datetime.datetime.now())])
+                        heart_rate_times=[(datetime.datetime.now())])
         u.save()
 
 
