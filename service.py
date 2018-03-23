@@ -21,7 +21,7 @@ def return_hrs(user_email):
         heart_rates = user.heart_rate
 
     except FileNotFoundError:
-        return "User does not exist", 404
+        return jsonify({"message": "User does not exist"}), 404
 
     data = {
         "hrs": heart_rates,
@@ -46,7 +46,7 @@ def return_avg_hr(user_email):
         avg = sum / len(user.heart_rate)
 
     except FileNotFoundError:
-        return "User does not exist", 404
+        return jsonify({"message": "User does not exist"}), 404
 
     data = {
         "avg_hr": avg
@@ -67,7 +67,8 @@ def add_hr():
         user_age = r["user_age"]
         heart_rate = r["heart_rate"]
     except ValueError:
-        return "data missing user_email, user_age or heart rate field(s)", 400
+        return jsonify({"message": "data missing user_email, "
+                                   "user_age or heart rate field(s)"}), 400
 
     exists = False
     for user in models.User.objects.raw({}):
@@ -104,17 +105,17 @@ def calc_interval_avg():
         user_email = r["user_email"]
         time = r["heart_rate_average_since"]
     except ValueError:
-        return "data missing user_email or " \
-               "heart_rate_average_since field(s)", 400
+        return jsonify({"message": "data missing user_email or "
+                        "heart_rate_average_since field(s)"}), 400
     try:
         user = models.User.objects.raw({"_id": r["user_email"]}).first()
     except FileNotFoundError:
-        return "User does not exist", 404
+        return jsonify({"message": "User does not exist"}), 404
     try:
         time = datetime.datetime.strptime(r["heart_rate_average_since"],
                                           "%Y-%m-%d %H:%M:%S.%f")
     except TypeError:
-        return "format of time is incorrect", 400
+        return jsonify({"message": "format of time is incorrect"}), 400
     for i in range(0, len(user.heart_rate_times)):
         if user.heart_rate_times[i] > time:
             index = i
@@ -159,4 +160,4 @@ def is_tachycardic(average, age):
         return False
 
     except TypeError:
-        return "Average and Age must be numbers", 400
+        return jsonify({"message": "Average and Age must be numbers"}), 400
